@@ -1,4 +1,5 @@
 This is the official code for the CVPRW-DCA in MI 2024 paper "Repeat and Concatenate: 2D to 3D Image Translation with 3D to 3D Generative Modeling"
+
 ![model_overview](./model_figure.png)
 
 ## Usage
@@ -6,7 +7,7 @@ This is the official code for the CVPRW-DCA in MI 2024 paper "Repeat and Concate
 python ot_train_3d.py --config/experiments/2v.yaml --cuda
 ```
 ```
-python eval_metrics.py configs/experiments/CONFIG.yaml --cuda --model_path /path/to/model.pth
+python eval_metrics.py --configs/experiments/CONFIG.yaml --cuda --model_path /path/to/model.pth
 ```
 
 ## BibTeX
