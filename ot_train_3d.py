@@ -7,6 +7,7 @@ import yaml
 import wandb
 import sys
 import copy
+import monai
 from yaml.loader import SafeLoader
 from tabulate import tabulate
 
@@ -23,7 +24,6 @@ from src.dataloader import XCT_dataset
 from src.diffaug import DiffAugment
 from src.utils import kaiming_weights_init, load_models_from_checkpoint, get_minibatch, get_views, eval_psnr_ssim, update_config, save_config, save_ct_slices
 
-sys.path.append('monai')
 ##########################################################################
 
 parser = argparse.ArgumentParser(
@@ -164,10 +164,9 @@ if config['model'] == 'unet':
     from src.unet import UNet3D
     AE = UNet3D(config['data']['num_ch'], config['data']['num_ch'],
                 groupnorm=config['training']['groupnorm'],
-                attention=config['training']['attention'],
-                decode=config['training']['self_sup']).to(device)
+                attention=config['training']['attention']).to(device)
 elif config['model'] == 'swin-unetr':
-    from src.swin_unetr import SwinUNETR
+    from monai.networks.nets import SwinUNETR
     AE = SwinUNETR(
         img_size=(image_size, image_size, image_size),
         in_channels=config['data']['num_ch'],
