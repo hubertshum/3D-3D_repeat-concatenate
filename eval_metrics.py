@@ -10,7 +10,7 @@ import csv
 import random
 import yaml
 import wandb
-import sys
+import monai
 import time
 import numpy as np
 from yaml.loader import SafeLoader
@@ -25,7 +25,6 @@ from src.unet import UNet3D
 from src.dataloader import XCT_dataset
 from src.utils import load_model, get_views, update_config, save_config, save_ct_slices, to_unNorm, toUnMinMax, save_volume, Structural_Similarity, Peak_Signal_to_Noise_Rate_3D, MAE, MSE
 
-sys.path.append('monai')
 ##########################################################################
 
 parser = argparse.ArgumentParser(
@@ -60,7 +59,7 @@ print(tabulate(t_val,
 
 dataset = config['data']['dataset']
 
-results_dir = os.path.join(f"{config['training']['outf']}", f"{args.experiment}")
+results_dir = os.path.join(f"{config['training']['outf']}", f"{config['experiment']}")
 test_dir = os.path.join(results_dir, dataset, "test")
 inference_dir = os.path.join(results_dir, dataset, "inference")
 test_file = os.path.join(test_dir, 'metrics_results.csv')
@@ -121,7 +120,7 @@ if config['model'] == 'unet':
                 groupnorm=config['training']['groupnorm'],
                 attention=config['training']['attention']).to(device)
 elif config['model'] == 'swin-unetr':
-    from src.swin_unetr import SwinUNETR
+    from monai.networks.nets import SwinUNETR
     AE = SwinUNETR(
         img_size=(image_size, image_size, image_size),
         in_channels=config['data']['num_ch'],
@@ -146,7 +145,7 @@ mae_value = 0.0
 fid_value = 0.0
 total_time = 0.0
 
-noises_train = torch.randn(len(train_dataset), image_size, image_size) if args.sample_noise and num_xrays == 1 else None
+noises_train = torch.randn(len(valid_dataset), image_size, image_size) if args.sample_noise and num_xrays == 1 else None
 
 pbar = tqdm(enumerate(valid_loader), total=len(valid_loader))
 for it, data in pbar:
